@@ -377,7 +377,7 @@ def dataloader(path , batchsize = 64,saved = True, sp = 100, model_name = "dense
         test_normal = load_all_from_one_folder(f"{path}/test/normal")
         test_tumor = load_all_from_one_folder(f"{path}/test/tumor",1)
 
-        val_normal = load_all_from_one_folder(f"{path}/val/NORMAL")
+        val_normal = load_all_from_one_folder(f"{path}/val/normal")
         val_tumor = load_all_from_one_folder(f"{path}/val/tumor",1)
 
 
