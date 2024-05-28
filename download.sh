@@ -2,7 +2,7 @@
 
 pip install gdown
 
-zip_file_id="1ExZ-N4_RcMzNZO2uI-wo7pJqAFY135X9"
+zip_file_id="1BzLg4Mk5zXtIAMHkHTp9P5rf3QpinIMT"
 
 gdown --id $zip_file_id
 
