@@ -6,6 +6,7 @@ from skimage.segmentation import slic
 from torchvision import models, transforms
 from torch_geometric.data import Data
 import networkx as nx
+from PIL import Image
 
 # Segmentation de l'image
 def segment_image(image, n_segments=100):
@@ -82,7 +83,7 @@ def visualize_predictions(image, segments, predictions):
     plt.title("Superpixel Predictions")
     plt.show()
 
-# Exemple d'exécution
+# Charger et prétraiter l'image
 image = cv2.imread(img_path)
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 segments = segment_image(image, n_segments=100)
@@ -92,13 +93,17 @@ cnn_model = models.resnet18(pretrained=True)
 cnn_model = torch.nn.Sequential(*(list(cnn_model.children())[:-1]))
 cnn_model.eval()
 
+# Extraire les caractéristiques des superpixels
 features = extract_features(cnn_model, image, segments)
 data = create_graph(segments, features)
 
 # Charger le modèle GNN pré-entraîné
-gnn_model = torch.load(gcn_model.pt)
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+gnn_model = torch.load(gcn_model_path)
 gnn_model = gnn_model.to(device)
 
+# Prédire les classes des superpixels
 predictions = predict_superpixels(gnn_model, data, device)
-visualize_predictions(image, segments, predictions)
 
+# Visualiser les prédictions
+visualize_predictions(image, segments, predictions)
