@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from skimage.segmentation import slic
 from torchvision import models, transforms
 from torch_geometric.data import Data
+import networkx as nx
 
 # Segmentation de l'image
 def segment_image(image, n_segments=100):
@@ -51,6 +52,13 @@ def create_graph(segments, features):
     
     return data
 
+# Vérifier si deux superpixels sont voisins
+def are_neighbors(segments, i, j):
+    mask_i = segments == i
+    mask_j = segments == j
+    dilated_mask_i = cv2.dilate(mask_i.astype(np.uint8), np.ones((3, 3)))
+    return np.any(dilated_mask_i & mask_j)
+
 # Prédiction des superpixels
 def predict_superpixels(model, data, device):
     model.eval()
@@ -75,7 +83,7 @@ def visualize_predictions(image, segments, predictions):
     plt.show()
 
 # Exemple d'exécution
-image = cv2.imread('path_to_image')
+image = cv2.imread(img_path)
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 segments = segment_image(image, n_segments=100)
 
@@ -88,8 +96,9 @@ features = extract_features(cnn_model, image, segments)
 data = create_graph(segments, features)
 
 # Charger le modèle GNN pré-entraîné
-gnn_model = torch.load('path_to_gnn_model.pt')
+gnn_model = torch.load(gcn_model.pt)
 gnn_model = gnn_model.to(device)
 
 predictions = predict_superpixels(gnn_model, data, device)
 visualize_predictions(image, segments, predictions)
+
